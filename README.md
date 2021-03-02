@@ -2,14 +2,12 @@
 
 # Apache spark
 
-
->
 - 유사한 straming sw(storm, flink, samza 등)들과 실시간 분산처리 성능은 유사하고,
 - 또한 데이터의 유실을 방지하는 exactly once도 유사하게 지원한다.
 - Apache spark의 장점은 실시간 처리와 함께 다양한 plugin(Graphx, SQL, MLlib)을 제공하여 원하는 제품을 쉽게 확장할 수 있는데 그 장점이 있다. (Apache Flink도 일부 유사함)
 - 또한 수많은 commiter & contrubuter들의 참여 및 기업에서의 적용/투자를 통하여 제품의 안정성 및 성능이 지속적으로 검증 및 개선된다는 장점도 있다
 - 이는 Open source sw를 도입하고자 하는 기업의 관점에서는 가장 중요한 항목중에 하나이다.
->
+
 ## 1. Install
   * install
   ```
@@ -53,9 +51,9 @@
   ```
 
 # redis
->
+
 - In memory cache, NoSQL key-value data store.
->
+
 
 ## 1. Install (redis 3.0.7)
   * install redis
@@ -74,15 +72,15 @@
 
 ## 2. run 
 ```
-> src/redis-server
+$ src/redis-server
 ```
 
 
 ## 3. test
   * set & get example
   ```
-  > cd ~/study-spark-streaming-redis/sw/redis-3.0.7
-  > src/redis-cli
+  $ cd ~/study-spark-streaming-redis/sw/redis-3.0.7
+  $ src/redis-cli
   redis> set kim seongho
   OK
   redis> get kim
@@ -166,7 +164,7 @@
 * import customer info to redis
   * run import_customer_info.py (read customer info and insert into redis)
   ```
-  $ cd ~/study-spark-streaming-redis/00.stage2
+  $ cd ~/study-spark-streaming-redis/data
   $ python import_customer_info.py
   ```
   * redis에 정상적으로 저장되었는지 확인
@@ -213,11 +211,11 @@
     * filter : 적용하지 않음 ( logstash는 빠르게 수집, 실제 데이터에 대한 처리(filter, aggregation...)는 spark streaming에서 처리 )
     * output : logs에서 읽은 문자열을 그대로 kafka로 produce
   ```
-  $ cd ~/study-spark-streaming-redis/00.stage2
-  $ vi logstash_stage2.conf
+  $ cd ~/study-spark-streaming-redis/data
+  $ vi logstash_streaming.conf
   input {  
   file {
-    path => "/home/user_name/study-spark-streaming-redis/00.stage1/tracks_live.csv"
+    path => "/home/user_name/study-spark-streaming-redis/data/tracks_live.csv"
     sincedb_path => "/dev/null"
     start_position => "beginning"
   }
@@ -239,8 +237,8 @@
   ```
   * run logstash
   ```
-  $ cd ~/study-spark-streaming-redis/00.stage2
-  $ ~/study-spark-streaming-redis/sw/logstash-2.4.0/bin/logstash -f logstash_stage2.conf
+  $ cd ~/study-spark-streaming-redis/data
+  $ ~/study-spark-streaming-redis/sw/logstash-7.6.1/bin/logstash -f logstash_streaming.conf
   ```
 # spark streaming
 * create spark application project using maven
@@ -269,11 +267,11 @@
 * compile spark application and run spark streaming
   * compile with maven command line
   ```
-  cd ~/study-spark-streaming-redis/00.stage2/demo-streaming
-  > sudo yum install -y maven
-  > mvn compile
-  > mvn package
-  > ls target
+  cd ~/study-spark-streaming-redis/demo-streaming
+  $ sudo apt-get install -y maven
+  $ mvn compile
+  $ mvn package
+  $ ls target
   # 필요한 library를 모두 합친 jar 파일이 생성되었다.
   demo-streaming-1.0-SNAPSHOT-jar-with-dependencies.jar
   # ..-jar-with-dependencies.jar은 application에 필요한 모든 library가 포함된 파일
@@ -282,8 +280,8 @@
   ```
   * spark-submit을 통해 spark application을 실행시킨다.
   ```
-  cd ~/study-spark-streaming-redis/00.stage2
-  > ./run_spark_streaming_s2.sh
+  $ cd ~/study-spark-streaming-redis/data
+  $ ./run_spark_streaming_s2.sh
   ```
     * 상세 설정
       * class : jar파일 내부에서 실제 구동할 class명
@@ -297,8 +295,8 @@
       * executor-cores : Number of cores per executor
 # run data_generator
 ```
-cd ~/study-spark-streaming-redis/00.stage1
-> python data_generator.py
+$ cd ~/study-spark-streaming-redis/data
+$ python data_generator.py
 ```
 # visualize collected data using kibana
   * ES의 데이터를 이용해 kibana에 visualize
