@@ -244,7 +244,7 @@ $ src/redis-server
 * create spark application project using maven
   * create scala/java project using maven
     * spark application은 scala와 java를 모두 사용하므로 maven project 구성 시에 .java, .scala파일을 모두 인식할 수 있도록 설정해야 한다.
-    * freepsw/java_scala[https://github.com/freepsw/java_scala] 프로젝트를 참고.
+    * [freepsw/java_scala](https://github.com/freepsw/java_scala) 프로젝트를 참고.
   * pom.xml에 dependency 추가
     * pom.xml(프로젝트에서 사용하는 library) 설정
     * 여기에서 지정한 library는 mavend에서 자동으로 download하여 compile, run time에 참조한다.
