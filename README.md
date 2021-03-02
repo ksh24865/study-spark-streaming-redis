@@ -302,6 +302,7 @@ $ python data_generator.py
   * ES의 데이터를 이용해 kibana에 visualize
   * elk stack 공부 당시 해봤으므로 생략.
 # result
-<img width="540" alt="image1" src="https://user-images.githubuserc100ontent.com/55729930/109662117-0bf40700-7bae-11eb-8969-3e4e20e73b93.gif" >
-<img width="1080" alt="image2" src="https://drive.google.com/uc?export=view&id=10X_vv_wAuVbK--hURcml6rZCaKaZTTVC" >
+
+<img width="360" alt="image1" src="https://drive.google.com/uc?export=view&id=10a32JLNPdDk1qogTRwJJFFuUomLIJiG_" > <br/>
+<img width="720" alt="image2" src="https://drive.google.com/uc?export=view&id=10X_vv_wAuVbK--hURcml6rZCaKaZTTVC" >
 
