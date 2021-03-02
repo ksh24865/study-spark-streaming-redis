@@ -303,5 +303,11 @@ $ python data_generator.py
   * elk stack 공부 당시 해봤으므로 생략.
 # result
 
-[2](https://user-images.githubusercontent.com/55729930/109662117-0bf40700-7bae-11eb-8969-3e4e20e73b93.gif)
+![2](https://user-images.githubusercontent.com/55729930/109662117-0bf40700-7bae-11eb-8969-3e4e20e73b93.gif) 
+<br/>
+
+
+<img style="max-width: 100%; height: auto;" src="https://drive.google.com/uc?export=view&id=1N3aodiJBYzeprBYjYSK26QT0ZguRJbw0" >
+
+
 
