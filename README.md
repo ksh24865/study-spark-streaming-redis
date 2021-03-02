@@ -203,7 +203,7 @@ $ src/redis-server
   19) "LinkedWithApps"
   20) "1"
   ```
-    
+    ![2](https://user-images.githubusercontent.com/55729930/109662117-0bf40700-7bae-11eb-8969-3e4e20e73b93.gif)
 # logstash
 * Read logs and send to kafka
   * logstash configuration
@@ -302,3 +302,4 @@ $ python data_generator.py
   * ES의 데이터를 이용해 kibana에 visualize
   * elk stack 공부 당시 해봤으므로 생략.
 # result
+![2](https://user-images.githubusercontent.com/55729930/109662117-0bf40700-7bae-11eb-8969-3e4e20e73b93.gif)
