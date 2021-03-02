@@ -31,7 +31,7 @@
     * add spark path to system path
     ```
     vi ~/.bashrc
-    export SPARK_HOME=~/demo-spark-analytics/sw/spark-2.0.1-bin-hadoop2.7
+    export SPARK_HOME=~/study-spark-streaming-redis/sw/spark-2.0.1-bin-hadoop2.7
     export PATH=$PATH:$SPARK_HOME/bin
     ```
     * Set ssh connection without password
@@ -114,7 +114,7 @@
   * install
   ```
   $ mkdir ~/study-spark-streaming-redis/sw
-  $ cd ~/demo-spark-analytics/sw
+  $ cd ~/study-spark-streaming-redis/sw
   $ wget https://artifacts.elastic.co/downloads/logstash/logstash-7.6.1.tar.gz
   $ tar xvf logstash-7.6.1.tar.gz
   ```
@@ -210,10 +210,10 @@
 * Read logs and send to kafka
   * logstash configuration
     * input : tracks_live.csv ( data_generator로 생성하는 file )
-    * filter : 적용하지 않음 ( logstash는 빠르게 수집, 실제 데이터에 대한 처라(filter, aggregation...)는 spark streaming에서 처리 )
+    * filter : 적용하지 않음 ( logstash는 빠르게 수집, 실제 데이터에 대한 처리(filter, aggregation...)는 spark streaming에서 처리 )
     * output : logs에서 읽은 문자열을 그대로 kafka로 produce
   ```
-  $ cd ~/demo-spark-analytics/00.stage2
+  $ cd ~/study-spark-streaming-redis/00.stage2
   $ vi logstash_stage2.conf
   input {  
   file {
@@ -239,8 +239,8 @@
   ```
   * run logstash
   ```
-  $ cd ~/demo-spark-analytics/00.stage2
-  $ ~/demo-spark-analytics/sw/logstash-2.4.0/bin/logstash -f logstash_stage2.conf
+  $ cd ~/study-spark-streaming-redis/00.stage2
+  $ ~/study-spark-streaming-redis/sw/logstash-2.4.0/bin/logstash -f logstash_stage2.conf
   ```
 # spark streaming
 * create spark application project using maven
@@ -264,11 +264,12 @@
       * customer_id를 key로 redis에서 사용자 상세 정보를 조회 (import_customer_info.py에서 저장한 고객정보)
       * kibana에서 사용할 timestamp field는 현재 시간으로 설정
     * Write to ElasticSearch
+      * 본인의 경우 ElasticSearch를 다른 PC에서 실행시켰으므로 해당 PC의 IP를 입력하였음.
       * kafka data + redis 고객정보를 합쳐서 elasticsearch에 저장
 * compile spark application and run spark streaming
   * compile with maven command line
   ```
-  cd ~/demo-spark-analytics/00.stage2/demo-streaming
+  cd ~/study-spark-streaming-redis/00.stage2/demo-streaming
   > sudo yum install -y maven
   > mvn compile
   > mvn package
@@ -281,7 +282,7 @@
   ```
   * spark-submit을 통해 spark application을 실행시킨다.
   ```
-  cd ~/demo-spark-analytics/00.stage2
+  cd ~/study-spark-streaming-redis/00.stage2
   > ./run_spark_streaming_s2.sh
   ```
     * 상세 설정
@@ -296,9 +297,10 @@
       * executor-cores : Number of cores per executor
 # run data_generator
 ```
-cd ~/demo-spark-analytics/00.stage1
+cd ~/study-spark-streaming-redis/00.stage1
 > python data_generator.py
 ```
 # visualize collected data using kibana
   * ES의 데이터를 이용해 kibana에 visualize
   * elk stack 공부 당시 해봤으므로 생략.
+# result
