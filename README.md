@@ -171,7 +171,7 @@
   ```
   * redis에 정상적으로 저장되었는지 확인
   ```
-  $ ~/demo-spark-analytics/sw/redis-3.0.7/src/redis-cli
+  $ ~/study-spark-streaming-redis/sw/redis-3.0.7/src/redis-cli
   127.0.0.1:6379> keys *
   # 사용자 id별로 key 생성
      1) "4042"
@@ -180,11 +180,8 @@
   ...
   4998) "1434"
   4999) "782"
-  ```
-  
+
   　
-   
-  ```
   127.0.0.1:6379> hgetall 2 
   #사용자 id 2번에 대한 정보를 조회
    1) "name"
@@ -216,6 +213,92 @@
     * filter : 적용하지 않음 ( logstash는 빠르게 수집, 실제 데이터에 대한 처라(filter, aggregation...)는 spark streaming에서 처리 )
     * output : logs에서 읽은 문자열을 그대로 kafka로 produce
   ```
-  
+  $ cd ~/demo-spark-analytics/00.stage2
+  $ vi logstash_stage2.conf
+  input {  
+  file {
+    path => "/home/user_name/study-spark-streaming-redis/00.stage1/tracks_live.csv"
+    sincedb_path => "/dev/null"
+    start_position => "beginning"
+  }
+  }
+
+  output {
+    stdout {
+      codec => rubydebug{ }
+    }
+
+    kafka {
+      codec => plain {
+        format => "%{message}"
+      }
+      bootstrap_servers => "localhost:9092"
+      topic_id => "realtime"
+    }
+  }
   ```
   * run logstash
+  ```
+  $ cd ~/demo-spark-analytics/00.stage2
+  $ ~/demo-spark-analytics/sw/logstash-2.4.0/bin/logstash -f logstash_stage2.conf
+  ```
+# spark streaming
+* create spark application project using maven
+  * create scala/java project using maven
+    * spark application은 scala와 java를 모두 사용하므로 maven project 구성 시에 .java, .scala파일을 모두 인식할 수 있도록 설정해야 한다.
+    * freepsw/java_scala[https://github.com/freepsw/java_scala] 프로젝트를 참고.
+  * pom.xml에 dependency 추가
+    * pom.xml(프로젝트에서 사용하는 library) 설정
+    * 여기에서 지정한 library는 mavend에서 자동으로 download하여 compile, run time에 참조한다.
+    * ~~~/pom.xml에 입력되어있음
+  * spark streaming driver 코드 작성
+    * SparkContex에 필요한 configuration을 설정
+    * StreamingContext를 생성
+    * Create Kafka Receiver and receive message from kafka broker
+      * kafka에서 데이터를 받기위한 Kafka receiver를 생성한다.
+      * 만약 kafka partition이 여러개 일 경우, numReceiver를 partition 갯수만큼 지정
+      * kafka receiver가 많아지면 데이터를 병렬로 읽어오게 된다.
+      * union을 활용하여 1개의 rdd로 join한다. (논리적으로 1개로 묶였을 뿐, 내부적으로는 여러개의 partition으로 구성됨)
+    * parser message and join customer info from redis
+      * kafkad에서 받아온 메세지 중에서 customer_id를 추출
+      * customer_id를 key로 redis에서 사용자 상세 정보를 조회 (import_customer_info.py에서 저장한 고객정보)
+      * kibana에서 사용할 timestamp field는 현재 시간으로 설정
+    * Write to ElasticSearch
+      * kafka data + redis 고객정보를 합쳐서 elasticsearch에 저장
+* compile spark application and run spark streaming
+  * compile with maven command line
+  ```
+  cd ~/demo-spark-analytics/00.stage2/demo-streaming
+  > sudo yum install -y maven
+  > mvn compile
+  > mvn package
+  > ls target
+  # 필요한 library를 모두 합친 jar 파일이 생성되었다.
+  demo-streaming-1.0-SNAPSHOT-jar-with-dependencies.jar
+  # ..-jar-with-dependencies.jar은 application에 필요한 모든 library가 포함된 파일
+  # spark은 분산 환경에서 구동하기 때문에, 해당 library가 모든 서버에 존재해야만 정상적으로 실행,
+  # 이러한 문제를 해결하기 위해서 jar파일 내부에 필요한 모든 library를 포함하도록 실행파일 생성.
+  ```
+  * spark-submit을 통해 spark application을 실행시킨다.
+  ```
+  cd ~/demo-spark-analytics/00.stage2
+  > ./run_spark_streaming_s2.sh
+  ```
+    * 상세 설정
+      * class : jar파일 내부에서 실제 구동할 class명
+      * master : spark master의 ip:port(default 7077)
+      * deploy-mode : spark는 driver와 executor로 구분되어 동작하게 됨. 여기서 driver의 구동 위치를 결정
+      * client : 현재 spark-submit을 실행한 서버에 driver가 구동됨.
+      * cluster : spark master가 cluster node 중에서 1개의 node를 지정해서, 해당 node에서 driver 구동
+      * driver-memory : driver 프로세스에 할당되는 메모리
+      * executor-memory : executor 1개당 할당되는 메모리
+      * total-executor-cores : Total cores for all executors.
+      * executor-cores : Number of cores per executor
+# run data_generator
+```
+cd ~/demo-spark-analytics/00.stage1
+> python data_generator.py
+```
+# visualize collected data using kibana
+  * ES의 데이터를 이용해 kibana에 visualize
+  * elk stack 공부 당시 해봤으므로 생략.
